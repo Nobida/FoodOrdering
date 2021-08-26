@@ -80,6 +80,9 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
             
             print("Success = \(res!.user.uid)")
             
+            // After Logging in Fetching Data
+            self.fetchData()
+            
         }
     }
     
@@ -92,14 +95,16 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
             
             guard let itemData = snap else { return }
             
+
+            
             self.items = itemData.documents.compactMap({
                 (doc) -> Item? in
                 let id = doc.documentID
                 let name = doc.get("item_name") as! String
                 let cost = doc.get("item_cost") as! NSNumber
-                let rating = doc.get("item_rating") as! String
+                let rating = doc.get("item_ratings") as! String
                 let image = doc.get("item_image") as! String
-                let details = doc.get("item_details") as! String
+                let details = doc.get("item_detail") as! String
                 
                 return Item(id: id, item_name: name, item_cost: cost, item_details: details, item_image: image, item_ratings: rating)
             })

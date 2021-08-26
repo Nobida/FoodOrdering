@@ -53,6 +53,18 @@ struct Home: View {
                 .padding(.top,10)
                 
                 Divider()
+                
+                ScrollView(.vertical, showsIndicators: false, content: {
+                    VStack(spacing: 25) {
+                        ForEach(HomeModel.items){item in
+                            
+                            // Item View
+                            //Text(item.item_name)
+                            ItemView(item: item)
+                                .frame(width: UIScreen.main.bounds.width - 30)
+                        }
+                    }
+                })
                 Spacer()
             }
             
