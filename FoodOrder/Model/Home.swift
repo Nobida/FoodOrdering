@@ -15,7 +15,7 @@ struct Home: View {
     var body: some View {
         
         VStack(spacing: 10) {
-            HStack(spacing: 15){
+            HStack(spacing: 15) {
                 Button(action: {}, label: {
                     Image(systemName: "line.horizontal.3")
                         .font(.title)
@@ -50,6 +50,12 @@ struct Home: View {
             Divider()
             Spacer()
         }
+        .onAppear(perform: {
+            // calling location delegate
+            HomeModel.locationManager.delegate = HomeModel 
+            HomeModel.locationManager.requestWhenInUseAuthorization()
+            // Modifying Info.plist
+        })
     }
 }
 
