@@ -17,7 +17,11 @@ struct Home: View {
         ZStack {
             VStack(spacing: 10) {
                 HStack(spacing: 15) {
-                    Button(action: {}, label: {
+                    Button(action: {
+                        withAnimation(.easeIn){
+                            HomeModel.showMenu.toggle()
+                        }
+                    }, label: {
                         Image(systemName: "line.horizontal.3")
                             .font(.title)
                             .foregroundColor(.pink)
@@ -52,6 +56,22 @@ struct Home: View {
                 Spacer()
             }
             
+            
+            
+            //Side Menu...
+            HStack {
+                Menu(homeData: HomeModel)
+                    .offset(x: HomeModel.showMenu ? 0 : -UIScreen.main.bounds.width / 1.6)
+                
+                Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
+
+            }
+            .background(Color.black.opacity(HomeModel.showMenu ? 0.3 : 0).ignoresSafeArea()                                    .onTapGesture (
+                            perform: {
+                                withAnimation(.easeIn){
+                                    HomeModel.showMenu.toggle()}
+                            }))
+            
             if HomeModel.noLocation {
                 Text("Please Enable Location Access In Setting To Further Move On !!!")
                     .foregroundColor(.black)
@@ -59,7 +79,10 @@ struct Home: View {
                     .background(Color.white)
                     .cornerRadius(10)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.3).ignoresSafeArea())
+                    .background(Color.black.opacity(0.3).ignoresSafeArea()
+
+
+                    )
 
             }
             
