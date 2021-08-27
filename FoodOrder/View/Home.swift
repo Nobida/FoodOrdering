@@ -40,15 +40,11 @@ struct Home: View {
                 .padding([.horizontal,.top])
                 Divider()
                 HStack(spacing: 15){
+                    Image(systemName: "magnifyingglass")
+                        .font(.title2)
+                        .foregroundColor(.gray)
                     TextField("Search", text: $HomeModel.search)
-                    if HomeModel.search != "" {
-                        Button(action: /*@START_MENU_TOKEN@*/{}/*@END_MENU_TOKEN@*/, label: {
-                            Image(systemName: "magnifyingglass")
-                                .font(.title2)
-                                .foregroundColor(.gray)
-                        })
-                        .animation(.easeIn)
-                    }
+
                 }.padding(.horizontal)
                 .padding(.top,10)
                 
@@ -56,7 +52,7 @@ struct Home: View {
                 
                 ScrollView(.vertical, showsIndicators: false, content: {
                     VStack(spacing: 25) {
-                        ForEach(HomeModel.items){item in
+                        ForEach(HomeModel.filtered){item in
                             
                             // Item View
                             //Text(item.item_name)
@@ -129,9 +125,23 @@ struct Home: View {
         .onAppear(perform: {
             // calling location delegate
             HomeModel.locationManager.delegate = HomeModel
-            
-            
             // Modifying Info.plist
+        })
+        .onChange(of: HomeModel.search, perform: {value in
+            
+            // to avoid Continus Search requests
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                if value == HomeModel.search && HomeModel.search != "" {
+                    // Search Data
+                    HomeModel.filterData()
+                }
+            }
+            
+            if HomeModel.search == "" {
+                withAnimation(.linear){
+                    HomeModel.filtered = HomeModel.items
+                }
+            }
         })
     }
 }

@@ -22,6 +22,8 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
     
     //ItemData...
     @Published var items: [Item] = []
+    @Published var filtered: [Item] = []
+    
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         //checking Location Access.....
@@ -63,7 +65,7 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
             address += ", "
             address += safeData.first?.locality ?? ""
             self.userAddress = address
-            print(safeData)
+            
             
         }
     }
@@ -109,8 +111,17 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
                 return Item(id: id, item_name: name, item_cost: cost, item_details: details, item_image: image, item_ratings: rating)
             })
             
+            self.filtered = self.items
+            
         }
     }
     
-
+    func filterData() {
+        
+        withAnimation(.linear) {
+            self.filtered = self.items.filter {
+                return $0.item_name.lowercased().contains(self.search.lowercased())
+            }
+        }
+    }
 }
