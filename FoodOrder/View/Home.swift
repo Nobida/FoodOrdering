@@ -60,10 +60,35 @@ struct Home: View {
                             
                             // Item View
                             //Text(item.item_name)
-                            ItemView(item: item)
-                                .frame(width: UIScreen.main.bounds.width - 30)
+                            
+                            ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
+                                ItemView(item: item)
+                                
+                                HStack {
+                                    Text("FREE DELIVERY")
+                                        .foregroundColor(.white)
+                                        .padding(.vertical, 10)
+                                        .padding(.horizontal)
+                                        .background(Color.pink)
+                                    
+                                    Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
+                                    
+                                    Button(action: {}, label: {
+                                        Image(systemName: "plus")
+                                            .foregroundColor(.white)
+                                            .padding(10)
+                                            .background(Color.pink)
+                                            .clipShape(Circle())
+                                    })
+                                }
+                                .padding(.trailing, 10)
+                                .padding(.top, 10)
+                                
+                            })
+                            .frame(width: UIScreen.main.bounds.width - 30)
                         }
                     }
+                    .padding(.top, 10)
                 })
                 Spacer()
             }

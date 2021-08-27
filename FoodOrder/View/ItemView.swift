@@ -18,7 +18,7 @@ struct ItemView: View {
             WebImage(url: URL(string: item.item_image))
                 .resizable()
                 .aspectRatio(contentMode: .fill)
-                .frame(height: 100)
+                .frame(width: UIScreen.main.bounds.width - 30, height: 250)
             
             HStack(spacing: 8) {
                 Text(item.item_name)
@@ -31,7 +31,7 @@ struct ItemView: View {
                 ForEach(1...5, id:\.self){
                     index in
                     Image(systemName: "star.fill")
-                        .foregroundColor(index <= Int(item.item_ratings) ?? 0 ? Color("pink") : .gray)
+                        .foregroundColor(index <= Int(item.item_ratings) ?? 0 ? Color.pink : .gray)
                 }
             }
             
