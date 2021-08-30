@@ -50,43 +50,58 @@ struct Home: View {
                 
                 Divider()
                 
-                ScrollView(.vertical, showsIndicators: false, content: {
-                    VStack(spacing: 25) {
-                        ForEach(HomeModel.filtered){item in
-                            
-                            // Item View
-                            //Text(item.item_name)
-                            
-                            ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
-                                ItemView(item: item)
+                if HomeModel.items.isEmpty {
+                    
+                    Spacer()
+                    
+                    ProgressView()
+                    
+                    Spacer()
+                    
+                } else {
+                    
+                    ScrollView(.vertical, showsIndicators: false, content: {
+                        VStack(spacing: 25) {
+                            ForEach(HomeModel.filtered){item in
                                 
-                                HStack {
-                                    Text("FREE DELIVERY")
-                                        .foregroundColor(.white)
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal)
-                                        .background(Color.pink)
+                                // Item View
+                                //Text(item.item_name)
+                                
+                                ZStack(alignment: Alignment(horizontal: .center, vertical: .top), content: {
+                                    ItemView(item: item)
                                     
-                                    Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
-                                    
-                                    Button(action: {}, label: {
-                                        Image(systemName: "plus")
+                                    HStack {
+                                        Text("FREE DELIVERY")
                                             .foregroundColor(.white)
-                                            .padding(10)
+                                            .padding(.vertical, 10)
+                                            .padding(.horizontal)
                                             .background(Color.pink)
-                                            .clipShape(Circle())
-                                    })
-                                }
-                                .padding(.trailing, 10)
-                                .padding(.top, 10)
-                                
-                            })
-                            .frame(width: UIScreen.main.bounds.width - 30)
+                                        
+                                        Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
+                                        
+                                        Button(action: {
+                                            HomeModel.addToCart(item: item)
+                                        }, label: {
+                                            Image(systemName: item.isAdded ? "checkmark" : "plus")
+                                                .foregroundColor(.white)
+                                                .padding(10)
+                                                .background(item.isAdded ? Color.green : Color.pink)
+                                                .clipShape(Circle())
+                                        })
+                                    }
+                                    .padding(.trailing, 10)
+                                    .padding(.top, 10)
+                                    
+                                })
+                                .frame(width: UIScreen.main.bounds.width - 30)
+                            }
                         }
-                    }
-                    .padding(.top, 10)
-                })
-                Spacer()
+                        .padding(.top, 10)
+                    })
+                }
+                
+                
+                //Spacer()
             }
             
             

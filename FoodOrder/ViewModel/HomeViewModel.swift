@@ -24,6 +24,11 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
     @Published var items: [Item] = []
     @Published var filtered: [Item] = []
     
+    //Cart Data
+    @Published var cartItems: [Cart] = []
+    @Published var ordered = false
+
+    
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         //checking Location Access.....
@@ -122,6 +127,109 @@ class HomeViewModel: NSObject,ObservableObject, CLLocationManagerDelegate{
             self.filtered = self.items.filter {
                 return $0.item_name.lowercased().contains(self.search.lowercased())
             }
+        }
+    }
+    
+    // add to Cart Function
+    func addToCart(item: Item){
+        
+        self.items[getIndex(item:item, isCardIndex: false)].isAdded = !item.isAdded
+        
+        
+        let filterIndex = self.filtered.firstIndex {
+            (item1) -> Bool in return item.id == item1.id
+        } ?? 0
+        
+        self.filtered[filterIndex].isAdded = !item.isAdded
+        
+        // checking it is added
+        if item.isAdded {
+            
+            //removing from list
+            self.cartItems.remove(at: getIndex(item: item, isCardIndex: true))
+            return
+        }
+        //else adding
+        self.cartItems.append(Cart(item: item, quantity: 1))
+    }
+    
+    func getIndex(item: Item, isCardIndex: Bool) -> Int {
+        
+        let index = self.items.firstIndex {
+            (item1) -> Bool in
+            return item.id == item1.id
+        } ?? 0
+        
+        let cartIndex = self.cartItems.firstIndex {
+            (item1) -> Bool in
+            return item.id == item1.id
+        } ?? 0
+        return isCardIndex ? cartIndex : index
+    }
+    
+    func calculateTotalPrice() -> String {
+        
+        var price: Float = 0
+        
+        cartItems.forEach{(item) in
+            price += Float(item.quantity) * Float(item.item.item_cost)
+        }
+        
+        return getPrice(value: price)
+        
+    }
+    
+    func getPrice(value: Float) -> String {
+        let format = NumberFormatter()
+        format.numberStyle = .currency
+        
+        return format.string(from: NSNumber(value: value)) ?? ""
+    }
+    
+    // writing Order Data into Firestore
+    
+    func updateOrder() {
+        
+        let db = Firestore.firestore()
+        
+        //creating dict of food details
+        if ordered{
+            ordered = false
+            
+            db.collection("Users").document(Auth.auth().currentUser!.uid).delete {
+                (err) in
+                if err != nil {
+                    self.ordered = true
+                }
+            }
+            return
+        }
+        
+        var details: [[String: Any]] = []
+        
+        cartItems.forEach {(cart) in
+            details.append([
+                "item_name": cart.item.item_name,
+                "item_quantity": cart.quantity,
+                "item_cost": cart.item.item_cost
+            ])
+        }
+        
+        ordered = true
+        db.collection("Users").document(Auth.auth().currentUser!.uid).setData([
+            "ordered_food": details,
+            "total_cost": calculateTotalPrice(),
+            "location": GeoPoint(latitude: userLocation.coordinate.latitude,
+                                 longitude: userLocation.coordinate.longitude)
+            
+        
+        ]) {
+            (err) in
+            if err != nil {
+                self.ordered = false
+                return
+            }
+            print("success")
         }
     }
 }

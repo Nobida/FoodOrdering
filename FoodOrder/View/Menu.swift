@@ -12,9 +12,11 @@ struct Menu: View {
     @ObservedObject var homeData : HomeViewModel
     
     var body: some View {
+        
+        
         VStack {
             
-            Button(action: {}, label: {
+            NavigationLink(destination: CartView(homeData: homeData)) {
                 HStack(spacing: 15) {
                     Image(systemName : "cart")
                         .font(.title)
@@ -25,8 +27,8 @@ struct Menu: View {
                     Spacer(minLength: /*@START_MENU_TOKEN@*/0/*@END_MENU_TOKEN@*/)
                 }
                 .padding()
-            })
-            
+            }
+
             Spacer()
             
             HStack {
